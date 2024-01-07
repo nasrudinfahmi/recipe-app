@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    font-family: "Poppins", sans-serif;
+    scroll-behavior: smooth;
+  }
+}
+
+::selection {
+  @apply text-orange-950 bg-orange-500/80;
+}
+
+.padding-inline {
+  @apply px-[2%] sm:px-[5%];
+}
+
+.d-300 {
+  @apply duration-300 ease-in-out;
+}
+
+.d-50 {
+  @apply duration-150 ease-in-out;
+}
+
+.navbar-style {
+  @apply *:select-none relative flex h-14 sm:h-16 padding-inline justify-between items-center;
+}
+
+.menus-navigation {
+  @apply flex p-5 origin-top absolute sm:static top-full left-0 w-full sm:w-max max-[639px]:flex-col sm:flex-row sm:scale-y-100 sm:opacity-100 sm:items-center gap-2 md:gap-3 d-300 z-50 max-[639px]:bg-stone-50 max-[639px]:border-b;
+}
+
+.navigation {
+  @apply d-50 font-semibold text-orange-900 sm:opacity-100 w-full sm:px-1 md:px-3 text-center py-1 block rounded-md sm:hover:bg-orange-100;
+}
+
+.select-style {
+  @apply block h-full p-1 basis-[152px] outline-none border rounded-r-md bg-orange-500 font-semibold text-white;
+}
+
+.border-search-wrapper {
+  @apply outline-orange-500 outline outline-1 rounded-md overflow-hidden;
+}
+
+.responsive-recipe-wrapper {
+  @apply grid gap-[6px] grid-cols-2 min-[600px]:grid-cols-3 min-[600px]:gap-3 min-[840px]:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6;
+}
+
+.responsive-my-recipe-wrapper {
+  @apply grid gap-[6px] grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))];
+}
+
+.message-box::before {
+  content: "Tulis Pesan Anda ...";
+  position: absolute;
+  color: rgba(67, 20, 7, 0.8);
+}
+
+.position-aside-admin {
+  @apply fixed pt-11 sm:pt-16 top-0 left-0 duration-300 ease-in-out;
+}
