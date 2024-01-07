@@ -64,3 +64,15 @@
 .position-aside-admin {
   @apply fixed pt-11 sm:pt-16 top-0 left-0 duration-300 ease-in-out;
 }
+
+.instructions::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  transform: translate(-60%, 75%);
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: rgb(194 65 12);
+  border-radius: 50%;
+}
