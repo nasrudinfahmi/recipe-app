@@ -5,6 +5,7 @@ import "dotenv/config";
 import cookieParser from "cookie-parser";
 import recipeRouters from "./routes/recipeRoutes.js";
 import userRouters from "./routes/userRoutes.js";
+import refreshTokenRouters from "./routes/refreshTokenRoutes.js";
 import { errorResponse } from "./utils/response.js";
 import { HTTP_STATUS } from "./utils/constants.js";
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(recipeRouters);
 app.use(userRouters);
+app.use(refreshTokenRouters);
 // Menangani error secara umum
 app.use((error, _req, res, _next) => {
   const errorMessage = [
