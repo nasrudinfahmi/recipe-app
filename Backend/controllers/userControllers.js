@@ -1,6 +1,7 @@
 import {
   modelDeleteUser,
   modelGetUserByEmail,
+  modelGetUserByRefreshToken,
   modelRegister,
   modelUpdateRefreshToken,
   modelUpdateUser,
@@ -203,19 +204,18 @@ const updateUserController = async (req, res) => {
 
 const logoutController = async (req, res) => {
   try {
-    const { email } = req.body;
     const { refreshToken } = req.cookies;
 
-    if (!email || !refreshToken) {
+    if (!refreshToken) {
       throw new Error(FORBIDDEN_REQUEST.FORBIDDEN);
     }
 
-    const { user } = await modelGetUserByEmail(email);
+    const { user } = await modelGetUserByRefreshToken(refreshToken);
     if (!user) {
       throw new Error(FORBIDDEN_REQUEST.FORBIDDEN);
     }
 
-    const { result } = await modelUpdateRefreshToken(["", email]);
+    const { result } = await modelUpdateRefreshToken(["", user.email]);
     if (result.affectedRows) {
       if (refreshToken) res.clearCookie("refreshToken");
       return successResponse({
