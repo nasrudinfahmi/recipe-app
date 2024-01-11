@@ -105,7 +105,7 @@ const createAccessToken = (payload) => {
 };
 
 const createRefreshToken = (payload) => {
-  const refreshToken = jwt.sign(payload, process.env.ACCESS_TOKEN, {
+  const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN, {
     expiresIn: "1d",
   });
   return refreshToken;
