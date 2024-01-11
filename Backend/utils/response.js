@@ -1,11 +1,23 @@
 import { HTTP_STATUS } from "./constants.js";
 
 const successResponse = ({ res, message, httpStatus, datas }) => {
-  return res.status(httpStatus).json({
-    success: true,
-    message: message,
-    datas: datas,
-  });
+  let response;
+
+  switch (httpStatus) {
+    case HTTP_STATUS.OK:
+      response = {
+        success: true,
+        message: message || "Berhasil mendapatkan data.",
+        datas: datas || [],
+      };
+      break;
+    case HTTP_STATUS.CREATED:
+      response = {
+        success: true,
+        message: message || "Berhasil menambahkan data baru.",
+      };
+  }
+  return res.status(httpStatus).json(response);
 };
 
 const errorResponse = ({ res, httpStatus, error, message }) => {
@@ -24,6 +36,22 @@ const errorResponse = ({ res, httpStatus, error, message }) => {
         success: false,
         error: error || "Not found error",
         message: message || "Resep tidak ditemukan",
+      };
+      break;
+    case HTTP_STATUS.UNAUTHORIZE:
+      response = {
+        success: false,
+        error: error || "Unauthorize!",
+        message: message || "Silahkan register terlebih dahulu",
+      };
+      break;
+    case HTTP_STATUS.FORBIDDEN:
+      response = {
+        success: false,
+        error: error || "Forbidden!",
+        message:
+          message ||
+          "Akses ditolak. Anda tidak memiliki izin untuk mengakses sumber daya ini.",
       };
       break;
     default:

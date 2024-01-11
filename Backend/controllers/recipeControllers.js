@@ -14,7 +14,7 @@ import {
   splitImgUrl,
   validateUpdateData,
 } from "../utils/index.js";
-import { updateRecipeData } from "../services/index.js";
+import { updateRecipeData } from "../services/recipeServices.js";
 
 const getAllRecipeController = async (_req, res) => {
   try {

@@ -2,7 +2,9 @@ import express from "express";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import "dotenv/config";
+import cookieParser from "cookie-parser";
 import recipeRouters from "./routes/recipeRoutes.js";
+import userRouters from "./routes/userRoutes.js";
 import { errorResponse } from "./utils/response.js";
 import { HTTP_STATUS } from "./utils/constants.js";
 
@@ -12,8 +14,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 app.use("/image", express.static(path.join(__dirname, "assets")));
+app.use(cookieParser());
 app.use(express.json());
 app.use(recipeRouters);
+app.use(userRouters);
 // Menangani error secara umum
 app.use((error, _req, res, _next) => {
   const errorMessage = [

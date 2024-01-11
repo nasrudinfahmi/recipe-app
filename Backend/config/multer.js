@@ -10,6 +10,16 @@ const recipeStorage = multer.diskStorage({
   },
 });
 
+const userStorage = multer.diskStorage({
+  destination: (_req, file, cb) => {
+    cb(null, "assets/user");
+  },
+  filename: (_req, file, cb) => {
+    const uniqueSuffix = Date.now() + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + file.originalname);
+  },
+});
+
 const recipeMulter = multer({
   storage: recipeStorage,
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -27,4 +37,21 @@ const recipeMulter = multer({
   },
 }).single("img");
 
-export { recipeMulter };
+const userMulter = multer({
+  storage: userStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.buffer > 5 * 1024 * 1024) {
+      cb(new Error("Ukuran gambar terlalu besar."));
+    } else if (
+      file.mimetype === "image/jpeg" ||
+      file.mimetype === "image/jpg"
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error("Format gambar tidak didukung"));
+    }
+  },
+}).single("img");
+
+export { recipeMulter, userMulter };
