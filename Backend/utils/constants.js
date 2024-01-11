@@ -11,6 +11,7 @@ const QUERY_RECIPE_CONSTANTS = {
 const QUERY_USER_CONSTANTS = {
   REGISTER: `INSERT INTO ${tbUser} (idUser, username, email, password, img) VALUES (?,?,?,?,?)`,
   GET_USER_BY_EMAIL: `SELECT username, email, password, img, refreshToken FROM ${tbUser} WHERE ${tbUser}.email = ?`,
+  GET_USER_BY_REFRESH_TOKEN: `SELECT username, email, img FROM ${tbUser} WHERE ${tbUser}.refreshToken = ?`,
   UPDATE_REFRESH_TOKEN: `UPDATE ${tbUser} SET refreshToken = ? WHERE email = ?`,
   DELETE_USER: `DELETE FROM ${tbUser} WHERE email = ?`,
   UPD_USER_BY_REFRESH_TOKEN: `SELECT username, email, img, refreshToken FROM ${tbUser} WHERE ${tbUser}.refreshToken = ?`,
@@ -21,7 +22,7 @@ const USER_ERROR_MESSAGE = {
     INVALID_DATA: "Data tidak valid!",
     REGISTERED: "Email anda sudah terdaftar!",
     UNMATCHED_PASSWORD: "Password tidak cocok!",
-    WRONG_PASSWORD: "Pasword tidak salah!",
+    WRONG_PASSWORD: "Pasword salah!",
     UNREGISTERED_ACCOUNT: "Email belum terdaftar!",
   },
   FORBIDDEN_REQUEST: {

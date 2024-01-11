@@ -206,8 +206,12 @@ const logoutController = async (req, res) => {
     const { email } = req.body;
     const { refreshToken } = req.cookies;
 
+    if (!email || !refreshToken) {
+      throw new Error(FORBIDDEN_REQUEST.FORBIDDEN);
+    }
+
     const { user } = await modelGetUserByEmail(email);
-    if (!user || !refreshToken) {
+    if (!user) {
       throw new Error(FORBIDDEN_REQUEST.FORBIDDEN);
     }
 
