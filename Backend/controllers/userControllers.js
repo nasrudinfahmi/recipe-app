@@ -78,8 +78,8 @@ const registerController = async (req, res) => {
     const responsePayload = {
       res,
       httpStatus,
-      error: error.message,
-      message: "Terdapat kesalahan saat registrasi",
+      error: "Terdapat kesalahan saat registrasi",
+      message: error.message,
     };
 
     return errorResponse(responsePayload);
@@ -126,8 +126,8 @@ const loginController = async (req, res) => {
     const responsePayload = {
       res,
       httpStatus,
-      error: error.message,
-      message: "Terdapat kesalahan saat login",
+      error: "Terdapat kesalahan saat login",
+      message: error.message,
     };
 
     return errorResponse(responsePayload);
@@ -157,8 +157,8 @@ const deleteUserController = async (req, res) => {
     const responsePayload = {
       res,
       httpStatus: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      error: error.message,
-      message: "Terdapat kesalahan saat menghapus akun data",
+      error: "Terdapat kesalahan saat menghapus akun data",
+      message: error.message,
     };
     return errorResponse(responsePayload);
   }
@@ -195,8 +195,8 @@ const updateUserController = async (req, res) => {
     const responsePayload = {
       res,
       httpStatus: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      error: error.message,
-      message: "Terdapat kesalahan saat memperbarui akun",
+      error: "Terdapat kesalahan saat memperbarui akun",
+      message: error.message,
     };
     return errorResponse(responsePayload);
   }
@@ -234,8 +234,8 @@ const logoutController = async (req, res) => {
     const responsePayload = {
       res,
       httpStatus,
-      error: error.message,
-      message: "Terdapat kesalahan saat memperbarui akun",
+      error: "Terdapat kesalahan saat memperbarui akun",
+      message: error.message,
     };
     return errorResponse(responsePayload);
   }
