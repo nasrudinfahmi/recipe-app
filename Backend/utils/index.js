@@ -51,14 +51,9 @@ const splitImgUrl = (imgUrl) => {
   return imgName;
 };
 
-const validateUpdateData = (updateData, img, res) => {
+const validateUpdateData = (updateData, img) => {
   if (Object.keys(updateData).length === 0 && !img) {
-    const responsePayload = {
-      res,
-      httpStatus: HTTP_STATUS.BAD_REQUEST,
-      message: "Tidak ada data yang diberikan untuk diperbarui",
-    };
-    return errorResponse(responsePayload);
+    return true;
   }
   return false;
 };

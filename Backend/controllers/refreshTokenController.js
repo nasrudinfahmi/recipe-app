@@ -28,13 +28,16 @@ const refreshTokenController = async (req, res) => {
 
     return successResponse(responsePayload);
   } catch (error) {
-    const errorMessage = error.message;
-    const httpStatus = checkStatusError(FORBIDDEN_REQUEST, errorMessage);
+    const httpStatus =
+      error.message === FORBIDDEN_REQUEST.FORBIDDEN
+        ? HTTP_STATUS.FORBIDDEN
+        : HTTP_STATUS.INTERNAL_SERVER_ERROR;
+
     const responsePayload = {
       res,
       httpStatus,
-      error: error.message,
-      message: "Terdapat kesalahan saat generate refresh token baru",
+      error: "Terdapat kesalahan saat generate refresh token baru",
+      message: error.message,
     };
     return errorResponse(responsePayload);
   }

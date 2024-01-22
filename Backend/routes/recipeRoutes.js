@@ -4,6 +4,8 @@ import {
   deleteRecipeByIdController,
   getAllRecipeController,
   getRecipeByIdRecipeController,
+  getRecipeByIdUser,
+  getRecipesByTitleOrMainIngre,
   updateRecipeByIdController,
 } from "../controllers/recipeControllers.js";
 import { recipeMulter } from "../config/multer.js";
@@ -23,6 +25,8 @@ recipeRouters.get(
   verifyToken,
   getRecipeByIdRecipeController
 );
+recipeRouters.get("/recipe/own/:idUser", verifyToken, getRecipeByIdUser);
+recipeRouters.get("/recipe", verifyToken, getRecipesByTitleOrMainIngre);
 recipeRouters.delete(
   "/recipe/:idRecipe",
   verifyToken,
@@ -30,6 +34,7 @@ recipeRouters.delete(
 );
 recipeRouters.patch(
   "/recipe/:idRecipe",
+  verifyToken,
   recipeMulter,
   updateRecipeByIdController
 );

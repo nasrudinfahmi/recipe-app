@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types'
 import { useCallback, useEffect, useState } from "react"
 import BtnRecipe from "../../elements/BtnRecipe"
 import RecipeList from "../../fragments/RecipeList"
 
-export default function DetailSect() {
+export default function DetailSect({ recipe }) {
   const [isIngredients, setIsIngredients] = useState(true)
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 
@@ -15,28 +16,16 @@ export default function DetailSect() {
 
   useEffect(() => {
     window.addEventListener('resize', handleResize)
-    return () => window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [handleResize])
 
-  const ingredients = [
-    'nasi', '5 bawang merah', '4 bawang putih', 'kecap manis', 'saos', 'garam', 'penyedap rasa', 'cabai', 'bawang goreng', 'ayam', 'udang', 'telor', 'kecap asin'
-  ]
-
-  const instructions = [
-    'Tuangkan minyak secukupnya di panci',
-    'Masukkan bawang putih, bawang merah, kemudian tumis hingga harum',
-    'Masukkan nasi ke panci, aduk sebentar',
-    'Masukkan kecap manis, kecap asin, garam, dan saos tiram',
-    'Masukkan penyedap rasa',
-    'Jika sudah matang sajikan di atas piring',
-    'Tambkan telor mata sapi dan potongan ayam suwir diatasnya',
-    'Terakhir tambahkan bawang goreng diatasnya sesuai selera'
-  ]
+  const ingredients = recipe?.ingredients?.split(', ') || []
+  const instructions = JSON.parse(recipe?.instructions?.split(', ')) || []
 
   return (
     <section>
       <h1 className="text-xl sm:text-2xl lg:text-3xl leading-tight line-clamp-3 mt-2 text-orange-950">
-        <strong>Nasi goreng cak har</strong>
+        <strong>{recipe.title}</strong>
       </h1>
 
       {windowWidth < 640 && (
@@ -71,4 +60,8 @@ export default function DetailSect() {
       )}
     </section>
   )
+}
+
+DetailSect.propTypes = {
+  recipe: PropTypes.object.isRequired
 }

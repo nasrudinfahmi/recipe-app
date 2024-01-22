@@ -3,6 +3,7 @@ import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import "dotenv/config";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import recipeRouters from "./routes/recipeRoutes.js";
 import userRouters from "./routes/userRoutes.js";
 import refreshTokenRouters from "./routes/refreshTokenRoutes.js";
@@ -14,12 +15,21 @@ const port = process.env.PORT;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+app.use(
+  cors({
+    credentials: process.env.CORS_CREDENTIALS === "true",
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    optionsSuccessStatus:
+      parseInt(process.env.CORS_OPTIONS_SUCCESS_STATUS) || 200,
+  })
+);
 app.use("/image", express.static(path.join(__dirname, "assets")));
 app.use(cookieParser());
 app.use(express.json());
 app.use(recipeRouters);
 app.use(userRouters);
 app.use(refreshTokenRouters);
+
 // Menangani error secara umum
 app.use((error, _req, res, _next) => {
   const errorMessage = [

@@ -5,7 +5,7 @@ import RecipeSect from "../components/sections/home/RecipeSect";
 
 export default function Home() {
   return (
-    <main className="padding-inline">
+    <main className="padding-inline bg-orange-50/20">
       <HeroSect />
       <RecipeSect />
       <AboutSect />

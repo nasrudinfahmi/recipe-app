@@ -1,3 +1,7 @@
+import dashboard from "../assets/Icons/dashboard.svg";
+import bread from "../assets/Icons/bread.svg";
+import edit from "../assets/Icons/edit.svg";
+
 const ABOUT_CONTENT = [
   {
     title: "Sejarah",
@@ -45,11 +49,9 @@ const NAVIGATION = [
 ];
 
 const LINK_DASHBOARD = [
-  { title: "Dashboard", path: "/dashboard" },
-  { title: "Tambah Resep", path: "/dashboard/add" },
-  { title: "Ubah Resep", path: "/dashboard/edit" },
-  { title: "Keluar", path: "/login" },
-  { title: "Hapus Akun", path: "/register" },
+  { title: "Dashboard", path: "/dashboard", icon: dashboard },
+  { title: "Resep Baru", path: "/dashboard/add", icon: bread },
+  { title: "Ubah Resep", path: "/dashboard/edit", icon: edit },
 ];
 
 export { ABOUT_CONTENT, NAVIGATION, LINK_DASHBOARD };

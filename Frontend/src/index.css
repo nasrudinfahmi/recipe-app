@@ -52,7 +52,8 @@
 }
 
 .responsive-my-recipe-wrapper {
-  @apply grid gap-[6px] grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))];
+  /* @apply grid gap-[6px] grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]; */
+  @apply grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5;
 }
 
 .message-box::before {
@@ -62,7 +63,11 @@
 }
 
 .position-aside-admin {
-  @apply fixed pt-11 sm:pt-16 top-0 left-0 duration-300 ease-in-out;
+  @apply fixed pt-4 sm:pt-5 top-0 left-0 duration-300 ease-in-out;
+}
+
+.list-style-admin {
+  @apply w-full leading-none my-3 text-lg px-[3%];
 }
 
 .instructions::before {
@@ -75,4 +80,25 @@
   height: 0.5rem;
   background-color: rgb(194 65 12);
   border-radius: 50%;
+}
+
+.table-columns {
+  @apply px-1 py-3 text-sm lg:text-base;
+}
+
+.table-btn-action {
+  @apply border basis-full px-2 rounded-md py-[3px] sm:py-1;
+}
+
+.animate-loading {
+  animation: loading 0.25s linear infinite;
+}
+
+@keyframes loading {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

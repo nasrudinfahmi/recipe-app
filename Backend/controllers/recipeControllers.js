@@ -2,6 +2,8 @@ import {
   modelAddRecipe,
   modelDeleteRecipe,
   modelGetAllRecipes,
+  modelGetOwnRecipe,
+  modelGetRecipesByTitleOrMainIngre,
   modelGetRecipeById,
 } from "../model/recipeModel.js";
 import { HTTP_STATUS } from "../utils/constants.js";
@@ -15,10 +17,16 @@ import {
   validateUpdateData,
 } from "../utils/index.js";
 import { updateRecipeData } from "../services/recipeServices.js";
+import { RECIPE_ERROR_MESSAGE } from "../utils/constants.js";
+
+const { NOT_FOUND, BAD_REQUEST } = RECIPE_ERROR_MESSAGE;
 
 const getAllRecipeController = async (_req, res) => {
   try {
     const { recipes } = await modelGetAllRecipes();
+    if (recipes.length === 0) {
+      throw new Error(NOT_FOUND.NOT_FOUND_RECIPE);
+    }
 
     const responsePayload = {
       res,
@@ -32,11 +40,16 @@ const getAllRecipeController = async (_req, res) => {
 
     return successResponse(responsePayload);
   } catch (error) {
+    const httpStatus =
+      error.message === NOT_FOUND.NOT_FOUND_RECIPE
+        ? HTTP_STATUS.NOT_FOUND
+        : HTTP_STATUS.INTERNAL_SERVER_ERROR;
+
     const responsePayload = {
       res,
-      httpStatus: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      error: error.message,
-      message: "Terdapat kesalahan saat mendapatkan resep",
+      httpStatus,
+      error: "Terdapat kesalahan saat mendapatkan resep",
+      message: error.message,
     };
 
     return errorResponse(responsePayload);
@@ -49,12 +62,7 @@ const getRecipeByIdRecipeController = async (req, res) => {
     const { recipe } = await modelGetRecipeById(idRecipe);
 
     if (!recipe) {
-      const responsePayload = {
-        res,
-        httpStatus: HTTP_STATUS.NOT_FOUND,
-        message: "Resep tidak ditemukan",
-      };
-      return errorResponse(responsePayload);
+      throw new Error(NOT_FOUND.NOT_FOUND_RECIPE);
     }
 
     const responsePayload = {
@@ -66,11 +74,122 @@ const getRecipeByIdRecipeController = async (req, res) => {
 
     return successResponse(responsePayload);
   } catch (error) {
+    const httpStatus =
+      error.message === NOT_FOUND.NOT_FOUND_RECIPE
+        ? HTTP_STATUS.NOT_FOUND
+        : HTTP_STATUS.INTERNAL_SERVER_ERROR;
+
     const responsePayload = {
       res,
-      httpStatus: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      error: error.message,
-      message: "Gagal memperoleh resep dari database",
+      httpStatus,
+      error: "Gagal memperoleh resep dari database",
+      message: error.message,
+    };
+
+    return errorResponse(responsePayload);
+  }
+};
+
+const getRecipeByIdUser = async (req, res) => {
+  try {
+    const { idUser } = req.params;
+    const { recipes } = await modelGetOwnRecipe(idUser);
+
+    if (recipes.length === 0) {
+      throw new Error(NOT_FOUND.NOT_FOUND_RECIPE);
+    }
+
+    const responsePayload = {
+      res,
+      httpStatus: HTTP_STATUS.OK,
+      message: "Berhasil mendapatkan resep makanana.",
+      datas: recipes,
+    };
+
+    return successResponse(responsePayload);
+  } catch (error) {
+    const httpStatus =
+      error.message === NOT_FOUND.NOT_FOUND_RECIPE
+        ? HTTP_STATUS.NOT_FOUND
+        : HTTP_STATUS.INTERNAL_SERVER_ERROR;
+
+    const responsePayload = {
+      res,
+      httpStatus,
+      error: "Gagal Mendapatkan Resep Makanan.",
+      message: error.message,
+    };
+
+    return errorResponse(responsePayload);
+  }
+};
+
+const getRecipesByTitleOrMainIngre = async (req, res) => {
+  try {
+    const { title, mainIngre } = req.query;
+
+    if (
+      (!title || title?.trim() === "") &&
+      (!mainIngre || mainIngre?.trim() === 0)
+    ) {
+      throw new Error(BAD_REQUEST.EMPTY_KEYWORD);
+    }
+
+    if (title) {
+      const { recipes } = await modelGetRecipesByTitleOrMainIngre(
+        "title",
+        title.trim()
+      );
+      if (recipes.length === 0) {
+        throw new Error(NOT_FOUND.NOT_FOUND_RECIPE);
+      }
+
+      const responsePayload = {
+        res,
+        message: "Resep ditemukan.",
+        httpStatus: HTTP_STATUS.OK,
+        datas: {
+          recipes_length: recipes.length,
+          recipes,
+        },
+      };
+      return successResponse(responsePayload);
+    }
+
+    if (mainIngre) {
+      const { recipes } = await modelGetRecipesByTitleOrMainIngre(
+        "main_ingredient",
+        mainIngre.trim()
+      );
+
+      if (recipes.length === 0) {
+        throw new Error(NOT_FOUND.NOT_FOUND_RECIPE);
+      }
+
+      const responsePayload = {
+        res,
+        message: "Resep ditemukan.",
+        httpStatus: HTTP_STATUS.OK,
+        datas: {
+          recipes_length: recipes.length,
+          recipes,
+        },
+      };
+      return successResponse(responsePayload);
+    }
+  } catch (error) {
+    const httpStatus =
+      error.message === BAD_REQUEST.EMPTY_KEYWORD
+        ? HTTP_STATUS.BAD_REQUEST
+        : error.message === NOT_FOUND.NOT_FOUND_RECIPE
+        ? HTTP_STATUS.NOT_FOUND
+        : HTTP_STATUS.INTERNAL_SERVER_ERROR;
+
+    const responsePayload = {
+      res,
+      httpStatus,
+      error: "Gagal Mendapatkan Resep Makanan.",
+      message: error.message,
     };
 
     return errorResponse(responsePayload);
@@ -82,16 +201,20 @@ const addRecipeController = async (req, res) => {
     let img = req.file?.filename;
     const isDataValid = isRecipeDataValid(req, "add");
     if (!isDataValid) {
-      const responsePayload = {
-        res,
-        httpStatus: HTTP_STATUS.BAD_REQUEST,
-        message: "Semua kolom harus diisi.",
-      };
-      handleImageDeletion(img, "recipe");
-      return errorResponse(responsePayload);
+      throw new Error(BAD_REQUEST.ALL_FIELDS_NOT_FILLED);
     }
+    // if (!isDataValid) {
+    //   const responsePayload = {
+    //     res,
+    //     httpStatus: HTTP_STATUS.BAD_REQUEST,
+    //     message: "Semua kolom harus diisi.",
+    //   };
+    //   handleImageDeletion(img, "recipe");
+    //   return errorResponse(responsePayload);
+    // }
 
     const idRecipe = generateRandomId();
+    const imgUrl = createImgUrl(req, img, "recipe");
     const {
       idUser,
       title,
@@ -109,7 +232,7 @@ const addRecipeController = async (req, res) => {
       main_ingredient,
       ingredients,
       instructions,
-      (img = createImgUrl(req, img, "recipe")),
+      imgUrl,
     ];
 
     const { result } = await modelAddRecipe(recipeValues);
@@ -122,11 +245,16 @@ const addRecipeController = async (req, res) => {
     }
   } catch (error) {
     const img = req.file?.filename;
+    const httpStatus =
+      error.message === BAD_REQUEST.ALL_FIELDS_NOT_FILLED
+        ? HTTP_STATUS.BAD_REQUEST
+        : HTTP_STATUS.INTERNAL_SERVER_ERROR;
+
     const responsePayload = {
       res,
-      httpStatus: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      error: error.message,
-      message: "Gagal menambahkan resep baru.",
+      httpStatus,
+      error: "Gagal menambahkan resep baru.",
+      message: error.message,
     };
     handleImageDeletion(img, "recipe");
     return errorResponse(responsePayload);
@@ -139,12 +267,7 @@ const deleteRecipeByIdController = async (req, res) => {
     const { recipe } = await modelGetRecipeById(idRecipe);
 
     if (!recipe) {
-      const responsePayload = {
-        res,
-        httpStatus: HTTP_STATUS.NOT_FOUND,
-        message: "Resep tidak ditemukan",
-      };
-      return errorResponse(responsePayload);
+      throw new Error(NOT_FOUND.NOT_FOUND_RECIPE);
     }
 
     const { img } = recipe;
@@ -161,11 +284,16 @@ const deleteRecipeByIdController = async (req, res) => {
       });
     }
   } catch (error) {
+    const httpStatus =
+      error.message === NOT_FOUND.NOT_FOUND_RECIPE
+        ? HTTP_STATUS.NOT_FOUND
+        : HTTP_STATUS.INTERNAL_SERVER_ERROR;
+
     const responsePayload = {
       res,
-      httpStatus: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      error: error.message,
-      message: "Gagal menghapus resep.",
+      httpStatus,
+      error: "Gagal menghapus resep.",
+      message: error.message,
     };
     return errorResponse(responsePayload);
   }
@@ -180,17 +308,12 @@ const updateRecipeByIdController = async (req, res) => {
     const { recipe } = await modelGetRecipeById(idRecipe);
     if (!recipe) {
       handleImageDeletion(img, "recipe");
-      const responsePayload = {
-        res,
-        httpStatus: HTTP_STATUS.NOT_FOUND,
-        message: "Resep yang akan diperbarui tidak ditemukan.",
-      };
-      return errorResponse(responsePayload);
+      throw new Error(NOT_FOUND.NOT_FOUND_RECIPE);
     }
 
-    const validateErrorResult = validateUpdateData(updateData, img, res);
+    const validateErrorResult = validateUpdateData(updateData, img);
     if (validateErrorResult) {
-      return validateErrorResult;
+      throw new Error(BAD_REQUEST.NO_DATA_UPDATED);
     }
 
     let updateFields = [];
@@ -207,15 +330,13 @@ const updateRecipeByIdController = async (req, res) => {
       const imgUrl = createImgUrl(req, img, "recipe");
       updateFields.push("img = ?");
       updateValues.push(imgUrl);
+    } else {
+      updateFields.push("img = ?");
+      updateValues.push(recipe.img);
     }
 
     if (updateFields.length === 0 || updateValues === 0) {
-      const responsePayload = {
-        res,
-        httpStatus: HTTP_STATUS.BAD_REQUEST,
-        message: "Tidak ada data yang diberikan untuk diperbarui",
-      };
-      return errorResponse(responsePayload);
+      throw new Error(BAD_REQUEST.NO_DATA_UPDATED);
     }
 
     const updateResult = await updateRecipeData(
@@ -225,24 +346,31 @@ const updateRecipeByIdController = async (req, res) => {
       img,
       recipe
     );
+
     if (updateResult) {
       return successResponse({
         res,
         httpStatus: HTTP_STATUS.OK,
         message: "Berhasil memperbarui resep.",
       });
-    } else {
-      throw Error;
     }
   } catch (error) {
     const img = req.file?.filename;
-    handleImageDeletion(img, "recipe");
+
+    const httpStatus =
+      error.message === NOT_FOUND.NOT_FOUND_RECIPE
+        ? HTTP_STATUS.NOT_FOUND
+        : error.message === BAD_REQUEST.NO_DATA_UPDATED
+        ? HTTP_STATUS.BAD_REQUEST
+        : HTTP_STATUS.INTERNAL_SERVER_ERROR;
 
     const responsePayload = {
       res,
-      httpStatus: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      message: "Terdapat kesalahan saat memperbarui resep.",
+      httpStatus,
+      error: "Terdapat kesalahan saat memperbarui resep.",
+      message: error.message,
     };
+    handleImageDeletion(img, "recipe");
     return errorResponse(responsePayload);
   }
 };
@@ -250,6 +378,8 @@ const updateRecipeByIdController = async (req, res) => {
 export {
   getAllRecipeController,
   getRecipeByIdRecipeController,
+  getRecipeByIdUser,
+  getRecipesByTitleOrMainIngre,
   addRecipeController,
   deleteRecipeByIdController,
   updateRecipeByIdController,

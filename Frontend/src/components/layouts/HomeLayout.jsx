@@ -11,7 +11,7 @@ export default function HomeLayout() {
 
   return (
     <>
-      <Header>
+      <Header className='bg-white'>
         <Navigations isActive={isNavActive} />
         <div className='sm:hidden'>
           <BtnHamburger handleClickHamburger={handleClickHamburger} />

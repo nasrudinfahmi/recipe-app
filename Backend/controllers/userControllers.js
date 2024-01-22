@@ -97,6 +97,7 @@ const loginController = async (req, res) => {
     }
 
     const payload = {
+      idUser: user.idUser,
       username: user.username,
       email: user.email,
       img: user.img,

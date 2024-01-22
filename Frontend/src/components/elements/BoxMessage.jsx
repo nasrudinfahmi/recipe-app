@@ -10,7 +10,7 @@ export default function BoxMessage() {
 
   return (
     <div
-      className="relative block text-orange-950 w-full message-box min-h-32 lg:min-h-44 xl:min-h-60 p-3 2xl:min-h-80 border border-1 border-orange-500 rounded-md"
+      className="relative block text-orange-950 w-full message-box min-h-32 lg:min-h-44 xl:min-h-60 p-3 2xl:min-h-80 border border-1 bg-orange-50/60 border-orange-500 rounded-md"
       contentEditable
       suppressContentEditableWarning
       spellCheck={false}

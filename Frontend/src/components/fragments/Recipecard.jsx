@@ -11,7 +11,7 @@ export default function RecipeCard({ id, title, body, img }) {
             <img src={img} alt="image" width={200} height={200} className='w-full h-full object-cover object-center' />
           </Suspense>
         </header>
-        <div className="px-2 pt-3 pb-4 bg-orange-50">
+        <div className="px-2 pt-3 pb-4 min-h-[200px] bg-orange-50/50">
           <h2 className="font-bold leading-tight line-clamp-2 mt-2 mb-3 text-orange-950">{title}</h2>
           <p className="line-clamp-5 leading-tight text-sm sm:text-base text-orange-900">{body}</p>
         </div>
