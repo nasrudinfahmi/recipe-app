@@ -49,7 +49,6 @@ async function getRecipes() {
     let loading = true;
     const url = `${BASE_URL}/recipes`;
     const { data } = await axios.get(url);
-    console.log(data);
     loading = false;
     return { recipes: data.datas.recipes, loading };
   } catch (error) {
